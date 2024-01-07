@@ -132,8 +132,9 @@ class ConnectionController extends AbstractController
             return $this->error($response, Util::flattenValidationErrors($v->errors()));
         }
 
+        ServerUtils::runServer($computerId, $user, $serverRepository, $connectionRepository, $this->logger, true);
+
         $connectionRepository->deleteConnection($user, $id, $computerId);
-        ServerUtils::runServer($computerId, $user, $serverRepository, $connectionRepository, $this->logger);
         return $this->data($response, ["success" => true], StatusCodeInterface::STATUS_NO_CONTENT);
     }
 

@@ -9,7 +9,7 @@ use Monolog\Logger;
 
 class ServerUtils
 {
-    public static function runServer(string $computerId, array $user, ServerRepository $serverRepository, ConnectionRepository $connectionRepository, Logger $logger): string|false|null{
+    public static function runServer(string $computerId, array $user, ServerRepository $serverRepository, ConnectionRepository $connectionRepository, Logger $logger, bool $remove = false): bool{
         $server = $serverRepository->getServerForUser($user);
         $connections = $connectionRepository->getConnectionsByServer($user["id"], $computerId, $server["id"]);
 
@@ -37,10 +37,12 @@ class ServerUtils
             shell_exec($cmdStart."docker rm {$containerName}");
         }
 
+        if($remove && sizeof($connections)-1 < 1) return true;
+
         $dockerCommand = $cmdStart."docker run -d --restart=always --name {$containerName} -v {$configPath}:/app/frps.toml {$ports_str} {$imageName}";
         $shellOutput = shell_exec($cmdStart."{$dockerCommand}");
         $logger->info("Running container {$containerName} with command {$dockerCommand}", [$shellOutput === null ? "fail" : "success", $shellOutput ?? $dockerCommand]);
-        return $shellOutput === null ? $dockerCommand : $shellOutput;
+        return !($shellOutput === null);
     }
 
     public static function generateServerTomlConfig(array $server, array $connections): string
