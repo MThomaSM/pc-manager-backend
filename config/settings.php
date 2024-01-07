@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use App\Console\ExampleCommand;
 
-$siteName = 'Slim-App';
+$siteName = 'PC Remote';
 
 return [
     'app' => [
@@ -51,11 +51,11 @@ return [
         'smtp_enable'     => false,
         'smtp_host'       => 'smtp.gmail.com',
         'smtp_auth'       => true,
-        'smtp_username'   => 'poweris526@gmail.com',
-        'smtp_password'   => 'qsecrbcycieylkgx',
+        'smtp_username'   => '',
+        'smtp_password'   => '',
         'smtp_secure'     => 'tls',
         'smtp_port'       => 587,
-        'smtp_from_email' => 'poweris526@gmail.com',
+        'smtp_from_email' => '',
         'smtp_from_user'  => $siteName . ' Staff',
     ],
     "jwt" => [
