@@ -26,6 +26,11 @@ class ServerUtils
         $dockerDir = dirname(__DIR__)."/../docker";
         $configPath = $dockerDir."/config/".$config_name;
         $imageName = "moj-frp-server";
+
+        if(is_dir($dockerDir."/config") === false){
+            mkdir($dockerDir."/config");
+        }
+
         $config_str = self::generateServerTomlConfig($server, $connections);
         file_put_contents($configPath, $config_str);
         $configPath = realpath($configPath);
@@ -37,7 +42,12 @@ class ServerUtils
             shell_exec($cmdStart."docker rm {$containerName}");
         }
 
-        if($remove && sizeof($connections)-1 < 1) return true;
+        if($remove && sizeof($connections)-1 < 1){
+            if(file_exists($configPath)){
+                unlink($configPath);
+            }
+            return true;
+        }
 
         $dockerCommand = $cmdStart."docker run -d --restart=always --name {$containerName} -v {$configPath}:/app/frps.toml {$ports_str} {$imageName}";
         $shellOutput = shell_exec($cmdStart."{$dockerCommand}");
