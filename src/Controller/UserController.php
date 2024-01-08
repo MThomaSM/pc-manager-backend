@@ -173,7 +173,7 @@ class UserController extends AbstractController
         $v = new Validator($body);
         $v->rules([
             "required" => [
-                ["email"]
+                ["email"], ["feUrl"]
             ],
             "email" => [
                 ["email"]
@@ -194,7 +194,7 @@ class UserController extends AbstractController
         $token = Uuid::uuid4()->toString();
 
         $subject = "Reset your password";
-        $body = "Click on the link to reset your password: " . $this->settings["app"]["url"] . "/system/changepassword/" . $token;
+        $body = "Click on the link to reset your password: " . $body["feUrl"]."/system/changepassword/" . $token;
 
         $sended = Util::sendEmail($mailer, $user["email"], $subject, $body);
         if (!$sended) {
@@ -202,7 +202,7 @@ class UserController extends AbstractController
         }
 
         $userRepository->updateUserPasswordToken($user["email"], $token);
-        return $this->data($response, $sended);
+        return $this->data($response, true);
     }
 
     private function generateJWT(string $userId): array
