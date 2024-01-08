@@ -165,41 +165,4 @@ class ConnectionRepository
         ]);
     }
 
-    public function connectionWithRemotePortExists(string $remotePort): ?array
-    {
-        return $this->db->get("connection", "*", [
-            "remotePort" => $remotePort,
-        ]);
-    }
-
-    public function connectionWithLocalPortExists(string $localPort): ?array
-    {
-        return $this->db->get("connection", "*", [
-            "localPort" => $localPort,
-        ]);
-    }
-
-
-    private function generateRandomPort(string $portName): ?int
-    {
-        $attempts = 0;
-        $maxAttempts = 25;
-
-        while ($attempts < $maxAttempts) {
-            $randomPort = rand(7000, 9999);
-
-            $existingPort = $this->db->get("connection", "*", [$portName => $randomPort]);
-
-            if (!$existingPort) {
-                return $randomPort;
-            }
-
-            $attempts++;
-        }
-
-        // Ak po 10 pokusoch nenašli voľný remote_port, vráťte null
-        return null;
-    }
-
-
 }

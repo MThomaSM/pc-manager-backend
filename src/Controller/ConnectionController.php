@@ -39,6 +39,10 @@ class ConnectionController extends AbstractController
             "entityExist" => [
                 ["computerId", "computer", ["id" => "#VALUE#", "userId" => $user["id"]]],
             ],
+            "entityDoesntExist" => [
+                ["remotePort", "connection", ["remotePort" => "#VALUE#", "userId" => $user["id"], "computerId" => $computerId]],
+                ["localPort", "connection", ["localPort" => "#VALUE#", "userId" => $user["id"], "computerId" => $computerId]],
+            ],
             "numeric" => [
                 ["remotePort"], ["localPort"]
             ],
@@ -56,16 +60,6 @@ class ConnectionController extends AbstractController
             return $this->error($response, Util::flattenValidationErrors($v->errors()));
         }
 
-        $existingRemotePort = $connectionRepository->connectionWithRemotePortExists($body["remotePort"]);
-        if($existingRemotePort && ($existingRemotePort["userId"] !== $user["id"]  || $existingRemotePort["computerId"] !== $computerId  || $existingRemotePort["type"] !== $body["type"])) {
-            return $this->error($response, "Connection with that remote port already exists, choose another and change your config accordingly for system to work properly", 409);
-        }
-
-        $existingLocalPort = $connectionRepository->connectionWithLocalPortExists($body["localPort"]);
-        if($existingLocalPort && ($existingLocalPort["userId"] !== $user["id"]  || $existingLocalPort["computerId"] !== $computerId  || $existingLocalPort["type"] !== $body["type"])) {
-            return $this->error($response, "Connection with that local port already exists, choose another and change your config accordingly for system to work properly", 409);
-        }
-
         $connection = $connectionRepository->createConnection($user, $computerId, $body);
         ServerUtils::runServer($computerId, $user, $serverRepository, $connectionRepository, $this->logger);
 
@@ -75,6 +69,16 @@ class ConnectionController extends AbstractController
     public function updateConnection(Request $request, Response $response, ConnectionRepository $connectionRepository, ServerRepository $serverRepository, string $computerId, string $id, array $user = []): Response
     {
         $body = $request->getParsedBody();
+        $connection = $connectionRepository->getConnection($user["id"], $id);
+
+        $entityDoesntExistValidation = [];
+        if($connection["remotePort"] !== $body["remotePort"]){
+            $entityDoesntExistValidation[] = ["remotePort", "connection", ["remotePort" => "#VALUE#", "userId" => $user["id"], "computerId" => $computerId]];
+        }
+
+        if($connection["localPort"] !== $body["localPort"]){
+            $entityDoesntExistValidation[] = ["localPort", "connection", ["localPort" => "#VALUE#", "userId" => $user["id"], "computerId" => $computerId]];
+        }
 
         $v = new Validator(["computerId" => $computerId, "id" => $id, ...$body]);
         $v->rules([
@@ -88,6 +92,9 @@ class ConnectionController extends AbstractController
                 ["computerId", "computer", ["id" => "#VALUE#", "userId" => $user["id"]]],
                 ["id", "connection", ["id" => "#VALUE#", "userId" => $user["id"]]],
             ],
+            "entityDoesntExist" => [
+                ...$entityDoesntExistValidation,
+            ],
             "numeric" => [
                 ["remotePort"], ["localPort"]
             ],
@@ -103,11 +110,6 @@ class ConnectionController extends AbstractController
 
         if (!$v->validate()) {
             return $this->error($response, Util::flattenValidationErrors($v->errors()));
-        }
-
-        $existingConnection = $connectionRepository->connectionWithRemotePortExists($body["remotePort"]);
-        if($existingConnection && ($existingConnection["userId"] !== $user["id"]  || $existingConnection["computerId"] !== $computerId  || $existingConnection["type"] !== $body["type"])) {
-            return $this->error($response, "Connection with that remote port already exists, choose another and change your config accordingly for system to work properly", 409);
         }
 
         $connection = $connectionRepository->updateConnection($user, $id, $computerId, $body);
