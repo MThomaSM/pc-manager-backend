@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 use App\Console\ExampleCommand;
 
-$siteName = 'PC Remote';
-
 return [
     'app' => [
         'name' => $_ENV["APP_NAME"],
@@ -14,9 +12,9 @@ return [
         'locale' => 'sk',
         'url' => "http://localhost:3000",
     ],
-    'environment' => 'DEVELOPMENT', // DEVELOPMENT or PRODUCTION
+    'environment' => $_ENV["APP_ENV"], // DEVELOPMENT or PRODUCTION
     'session' => [
-        'name'                   => str_replace(' ', '_', $siteName),
+        'name'                   => str_replace(' ', '_', $_ENV["APP_NAME"]),
         'sid_length'             => '128',
         'cache_expire'           => '300',
         'lazy_write'             => '0',
@@ -49,14 +47,14 @@ return [
     ],
     'mail' => [
         'smtp_enable'     => false,
-        'smtp_host'       => 'smtp.gmail.com',
+        'smtp_host'       => $_ENV["SMTP_HOST"],
         'smtp_auth'       => true,
-        'smtp_username'   => '',
-        'smtp_password'   => '',
-        'smtp_secure'     => 'tls',
-        'smtp_port'       => 587,
-        'smtp_from_email' => '',
-        'smtp_from_user'  => $siteName . ' Staff',
+        'smtp_username'   => $_ENV["SMTP_USERNAME"],
+        'smtp_password'   => $_ENV["SMTP_PASSWORD"],
+        'smtp_secure'     => $_ENV["SMTP_SECURE"],
+        'smtp_port'       => $_ENV["SMTP_PORT"],
+        'smtp_from_email' => $_ENV["SMTP_FROM_EMAIL"],
+        'smtp_from_user'  => $_ENV["SMTP_FROM_NAME"],
     ],
     "jwt" => [
         "secret" => $_ENV["JWT_SECRET"],
