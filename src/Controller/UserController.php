@@ -86,7 +86,7 @@ class UserController extends AbstractController
         $body = $request->getParsedBody();
         $updatePassword = false;
 
-        if(isset($body["password"]) && strlen($body["password"]) > 4){
+        if(isset($body["password"])){
             $v = new Validator($body);
             $v->rules([
                 "required" => [
@@ -95,6 +95,9 @@ class UserController extends AbstractController
                 "equals" => [
                     ["password", "passwordConfirm"]
                 ],
+                "lengthMin" => [
+                    ["username", 4]
+                ]
             ]);
 
             $v->labels([
