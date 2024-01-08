@@ -57,7 +57,7 @@ class StartlistRepository
         return ["data" => $data, "meta" => ["total" => $totalRecords, "page" => $page, "maxPages" => $maxPages, "perPage" => $itemsPerPage]];
     }
 
-    public function getMaclist(string $deviceId, array $user): array
+    public function getMaclist(string $deviceId): array
     {
         return $this->db->select(
             "startlist", // Hlavná tabuľka
@@ -67,7 +67,6 @@ class StartlistRepository
             "@computer.macAddress", //@ - DISTINCT
             [
                 "startlist.deviceId" => $deviceId, // Kde klauzula pre ID zariadenia
-                "startlist.userId" => $user["id"], // Kde klauzula pre ID používateľa
                 "startlist.startAt[<=]" => date('Y-m-d H:i:s'),
                 "startlist.executedAt" => null,
                 "LIMIT" => 100
@@ -92,7 +91,7 @@ class StartlistRepository
         ]);
     }
 
-    public function deleteStartlistByMacAddress(string $deviceId, string $macAddress, array $user): void
+    public function deleteStartlistByMacAddress(string $deviceId, string $macAddress): void
     {
         $now = date('Y-m-d H:i:s'); // Aktuálny čas vo formáte Y-m-d H:i:s
 

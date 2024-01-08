@@ -22,7 +22,7 @@ class StartlistController extends AbstractController
 
     public function maclist(Request $request, Response $response, StartlistRepository $startlistRepository, array $user = [], string $deviceId = null, string $computerId = null): Response
     {
-        return $this->json($response, $startlistRepository->getMaclist($deviceId, $user));
+        return $this->json($response, $startlistRepository->getMaclist($deviceId));
     }
 
     public function deleteByComputer(Request $request, Response $response, StartlistRepository $startlistRepository, array $user = [], string $deviceId = null, string $computerId = null): Response
@@ -83,7 +83,7 @@ class StartlistController extends AbstractController
             return $this->error($response, Util::flattenValidationErrors($v->errors()));
         }
 
-        $startlistRepository->deleteStartlistByMacAddress($deviceId, $macAddress, $user);
+        $startlistRepository->deleteStartlistByMacAddress($deviceId, $macAddress);
 
         return $this->data($response, ["success" => true], StatusCodeInterface::STATUS_NO_CONTENT);
 

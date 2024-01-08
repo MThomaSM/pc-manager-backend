@@ -36,6 +36,7 @@ return function (App $app) {
         $group->delete("/startlist/{id}", [StartlistController::class, "delete"]);
         $group->delete("/startlist/{deviceId}/{computerId}", [StartlistController::class, "deleteByComputer"]);
         $group->delete("/startlist/{deviceId}/mac/{macAddress}", [StartlistController::class, "maclistDeleteByMacAddress"]);
+        $group->get("/startlist/{deviceId}/mac/{macAddress}/remove", [StartlistController::class, "maclistDeleteByMacAddressGet"]);
 
         $group->get("/connections/{id}", [ConnectionController::class, "connectionById"]);
         $group->get("/computers/{computerId}/connections", [ConnectionController::class, "index"]);
