@@ -26,6 +26,7 @@ class ServerUtils
             $ports_str.= " -p {$connection["remotePort"]}:{$connection["remotePort"]}";
 
             $ipTablesStr .= $cmdStart."iptables -S DOCKER-USER | grep -- \"--dport {$connection["remotePort"]}\" | sed 's/-A/-D/' | while read line; do sudo iptables \$line; done;";
+            if($remove) continue;
 
             $whitelistedIp = array_filter(explode(",", $connection["ipWhitelist"] ?? ""));
 
