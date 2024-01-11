@@ -205,6 +205,11 @@ class UserController extends AbstractController
         return $this->data($response, true);
     }
 
+    public function getIp(Request $request, Response $response): Response
+    {
+        return $this->data($response, $request->getServerParams()['REMOTE_ADDR']);
+    }
+
     private function generateJWT(string $userId): array
     {
         $now = time();

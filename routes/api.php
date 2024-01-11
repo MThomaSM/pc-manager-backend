@@ -10,6 +10,7 @@ use Slim\Routing\RouteCollectorProxy;
 
 return function (App $app) {
     $app->group('/api', function (RouteCollectorProxy $group) {
+        $group->get("/getIp", [UserController::class, "getIp"]);
         $group->post("/signup", [UserController::class, "post"]);
         $group->post("/auth", [UserController::class, "auth"]);
         $group->patch("/users", [UserController::class, "patch"]);
