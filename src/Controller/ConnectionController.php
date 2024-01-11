@@ -141,7 +141,7 @@ class ConnectionController extends AbstractController
         }
 
         if (isset($body['ipWhitelist']) && is_array($body['ipWhitelist'])) {
-            $body['ipWhitelist'] = sizeof($body["ipWhitelist"]) > 0 ? implode(",", array_filter(explode(",", $connection["ipWhitelist"] ?? ""))) : null;
+            $body['ipWhitelist'] = sizeof($body["ipWhitelist"]) > 0 ? implode(",", $body['ipWhitelist']) : null;
         }
 
         $connection = $connectionRepository->updateConnection($user, $id, $computerId, $body);
