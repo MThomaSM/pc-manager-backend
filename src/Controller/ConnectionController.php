@@ -54,10 +54,26 @@ class ConnectionController extends AbstractController
                 ["remotePort", 65535],
                 ["localPort", 65535]
             ],
+            "optional" => [
+                ["ipWhitelist"]
+            ],
+            "array" => [
+                ["ipWhitelist"]
+            ],
         ]);
+
+        if (isset($body['ipWhitelist']) && is_array($body['ipWhitelist'])) {
+            foreach ($body['ipWhitelist'] as $key => $ip) {
+                $v->rule('ip', "ipWhitelist.{$key}");
+            }
+        }
 
         if (!$v->validate()) {
             return $this->error($response, Util::flattenValidationErrors($v->errors()));
+        }
+
+        if (isset($body['ipWhitelist']) && is_array($body['ipWhitelist'])) {
+            $body['ipWhitelist'] = sizeof($body["ipWhitelist"]) > 0 ? implode(",", $body['ipWhitelist']) : null;
         }
 
         $connection = $connectionRepository->createConnection($user, $computerId, $body);
@@ -106,10 +122,26 @@ class ConnectionController extends AbstractController
                 ["remotePort", 65535],
                 ["localPort", 65535]
             ],
+            "optional" => [
+                ["ipWhitelist"]
+            ],
+            "array" => [
+                ["ipWhitelist"]
+            ],
         ]);
+
+        if (isset($body['ipWhitelist']) && is_array($body['ipWhitelist'])) {
+            foreach ($body['ipWhitelist'] as $key => $ip) {
+                $v->rule('ip', "ipWhitelist.{$key}");
+            }
+        }
 
         if (!$v->validate()) {
             return $this->error($response, Util::flattenValidationErrors($v->errors()));
+        }
+
+        if (isset($body['ipWhitelist']) && is_array($body['ipWhitelist'])) {
+            $body['ipWhitelist'] = sizeof($body["ipWhitelist"]) > 0 ? implode(",", array_filter(explode(",", $connection["ipWhitelist"] ?? ""))) : null;
         }
 
         $connection = $connectionRepository->updateConnection($user, $id, $computerId, $body);

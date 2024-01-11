@@ -16,12 +16,28 @@ class ServerUtils
         $slugify = new Slugify();
         $containerName = $user["id"]."_".$slugify->slugify($server["name"], "_");
         $config_name = $containerName.".toml";
+        $cmdStart = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? "" : "sudo "; //on linux --- need to add www-data to sudoers for this to work --- temp fix --- need to find better solution
 
         $ports_str = " -p {$server["serverFrpPort"]}:{$server["serverFrpPort"]}";
+        $ipTablesStr = "";
 
         foreach ($connections as $connection){
+            $connection["type"] = mb_strtolower($connection["type"]);
             $ports_str.= " -p {$connection["remotePort"]}:{$connection["remotePort"]}";
+
+            $ipTablesStr .= $cmdStart."iptables -S DOCKER-USER | grep -- \"--dport {$connection["remotePort"]}\" | sed 's/-A/-D/' | while read line; do sudo iptables \$line; done;";
+
+            $whitelistedIp = array_filter(explode(",", $connection["ipWhitelist"] ?? ""));
+
+            if(!empty($whitelistedIp)) {
+                $ipTablesStr.= $cmdStart."iptables -I DOCKER-USER -p {$connection["type"]} --dport {$connection["remotePort"]} -j DROP;";
+                foreach ($whitelistedIp as $ip){
+                    $ipTablesStr .= $cmdStart."iptables -I DOCKER-USER -p {$connection["type"]} --dport {$connection["remotePort"]} -s {$ip} -j ACCEPT;";
+                }
+            }
+
         }
+
 
         $dockerDir = dirname(__DIR__)."/../docker";
         $configPath = $dockerDir."/config/".$config_name;
@@ -34,7 +50,6 @@ class ServerUtils
         $config_str = self::generateServerTomlConfig($server, $connections);
         file_put_contents($configPath, $config_str);
         $configPath = realpath($configPath);
-        $cmdStart = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? "" : "sudo "; //on linux --- need to add www-data to sudoers for this to work --- temp fix --- need to find better solution
 
         if(shell_exec($cmdStart."docker ps -all | grep {$containerName}") !== null){
             $logger->info("Stopping and removing container {$containerName}", );
@@ -51,6 +66,7 @@ class ServerUtils
 
         $dockerCommand = $cmdStart."docker run -d --restart=always --name {$containerName} -v {$configPath}:/app/frps.toml {$ports_str} {$imageName}";
         $shellOutput = shell_exec($cmdStart."{$dockerCommand}");
+        shell_exec($ipTablesStr);
         $logger->info("Running container {$containerName} with command {$dockerCommand}", [$shellOutput === null ? "fail" : "success", $shellOutput ?? $dockerCommand]);
         return !($shellOutput === null);
     }

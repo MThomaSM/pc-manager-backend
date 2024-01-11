@@ -31,6 +31,7 @@ class ConnectionRepository
             "connection.localPort",
             "connection.localIp",
             "computer.id(computerId)",
+            "connection.ipWhitelist",
 //            "computer.name(computerName)",
 //            "computer.macAddress",
         ],
@@ -57,6 +58,7 @@ class ConnectionRepository
                 "connection.localPort",
                 "connection.localIp",
                 "computer.id(computerId)",
+                "connection.ipWhitelist",
 //            "computer.name(computerName)",
 //            "computer.macAddress",
             ],
@@ -84,6 +86,7 @@ class ConnectionRepository
                 "connection.localPort",
                 "connection.localIp",
                 "computer.id(computerId)",
+                "connection.ipWhitelist",
 //                "computer.name(computerName)",
 //                "computer.macAddress",
             ],
@@ -114,6 +117,7 @@ class ConnectionRepository
                 "computer.id(computerId)",
                 "computer.name(computerName)",
                 "computer.macAddress",
+                "connection.ipWhitelist",
             ],
             [
                 "connection.userId" => $userId,
@@ -134,6 +138,7 @@ class ConnectionRepository
             "localPort" => $body["localPort"],
             "localIp" => $body["localIp"],
             "name" => $body["name"],
+            "ipWhitelist" => $body["ipWhitelist"] ?? null,
         ]);
 
         return $this->getConnectionByComputerAndType($user["id"], $computerId, $body["type"]);
@@ -147,6 +152,7 @@ class ConnectionRepository
             "localIp" => $body["localIp"],
             "name" => $body["name"],
             "type" => $body["type"],
+            "ipWhitelist" => $body["ipWhitelist"] ?? null,
         ], [
             "id" => $id,
             "userId" => $user["id"],

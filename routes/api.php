@@ -38,8 +38,10 @@ return function (App $app) {
         $group->delete("/startlist/{deviceId}/mac/{macAddress}", [StartlistController::class, "maclistDeleteByMacAddress"]);
         $group->get("/startlist/{deviceId}/mac/{macAddress}/remove", [StartlistController::class, "maclistDeleteByMacAddressGet"]);
 
-        $group->get("/connections/{id}", [ConnectionController::class, "connectionById"]);
         $group->get("/computers/{computerId}/connections", [ConnectionController::class, "index"]);
+        $group->get("/connections/{id}", [ConnectionController::class, "connectionById"]);
+        $group->get("/connections/{id}/ip-whitelist", [ConnectionController::class, "getWhitelistedIps"]);
+        $group->post("/connections/{id}/ip-whitelist", [ConnectionController::class, "setWhitelistedIps"]);
         $group->post("/connections/{computerId}", [ConnectionController::class, "createConnection"]);
         $group->patch("/connections/{computerId}/{id}", [ConnectionController::class, "updateConnection"]);
         $group->delete("/connections/{computerId}/{id}", [ConnectionController::class, "deleteConnection"]);
