@@ -57,6 +57,7 @@ class ServerUtils
             shell_exec($cmdStart."docker rm {$containerName}");
         }
 
+        shell_exec($ipTablesStr);
         if($remove && sizeof($connections)-1 < 1){
             if(file_exists($configPath)){
                 unlink($configPath);
@@ -66,7 +67,6 @@ class ServerUtils
 
         $dockerCommand = $cmdStart."docker run -d --restart=always --name {$containerName} -v {$configPath}:/app/frps.toml {$ports_str} {$imageName}";
         $shellOutput = shell_exec($cmdStart."{$dockerCommand}");
-        shell_exec($ipTablesStr);
         $logger->info("Running container {$containerName} with command {$dockerCommand}", [$shellOutput === null ? "fail" : "success", $shellOutput ?? $dockerCommand]);
         return !($shellOutput === null);
     }
