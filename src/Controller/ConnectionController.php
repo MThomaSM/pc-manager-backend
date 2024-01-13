@@ -215,8 +215,9 @@ class ConnectionController extends AbstractController
             $zip->addFromString($config_name, $config_str);
 
             $dataDir = dirname(__DIR__)."/../data";
-            $zip->addFile($dataDir."/client.exe", "client.exe");
-            $zip->addFile($dataDir."/start.bat", "start.bat");
+            $zip->addFile($dataDir."/client.exe", "data/client.exe");
+            $zip->addFile($dataDir."/ManualStart.bat", "data/ManualStart.bat");
+            $zip->addFile($dataDir."/PortForwarder.exe", "PortForwarder.exe");
             $zip->close();
         }
 
