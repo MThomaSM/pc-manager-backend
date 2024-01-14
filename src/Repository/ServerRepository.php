@@ -16,12 +16,12 @@ class ServerRepository
         return $this->db->get("server", "*", ["id" => $id, "userId" => $user["id"]]);
     }
 
-    public function getServerForUser(array $user){
+    public function getServerForUser(array $user): ?array
+    {
         $existingServer = $this->db->get("server", "*", ["userId" => $user["id"]]);
         if($existingServer) return $existingServer;
 
         $serverIp = "127.0.0.1";
-        $serverPort = 7000;
         $uuid = Uuid::uuid4()->toString();
         $this->db->insert("server",
             [

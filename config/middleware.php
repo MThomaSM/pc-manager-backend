@@ -23,11 +23,7 @@ return function (App $app) { //LIFO last in first out - posledny na spodku sa ex
 
     $app->add($container->get(JwtAuthentication::class));
 
-    // Parse json, form data and xml
     $app->addBodyParsingMiddleware();
-
-    // Add the Slim built-in routing middleware
-
 
     $app->add($container->get(TrailingSlash::class));
 

@@ -33,34 +33,34 @@ $definitions = [
 
         return $app;
     },
-    'settings' => function () {
+    'settings' => function (): array {
         return require __DIR__ . '/settings.php';
     },
-    Psr17Factory::class => function () {
+    Psr17Factory::class => function (): Psr17Factory {
         return new Psr17Factory();
     },
-    ResponseFactoryInterface::class => function (ContainerInterface $container) {
+    ResponseFactoryInterface::class => function (ContainerInterface $container): ResponseFactoryInterface {
         return $container->get(Psr17Factory::class);
     },
-    ServerRequestFactoryInterface::class => function (ContainerInterface $container) {
+    ServerRequestFactoryInterface::class => function (ContainerInterface $container): ServerRequestFactoryInterface {
         return $container->get(Psr17Factory::class);
     },
-    StreamFactoryInterface::class => function (ContainerInterface $container) {
+    StreamFactoryInterface::class => function (ContainerInterface $container): StreamFactoryInterface {
         return $container->get(Psr17Factory::class);
     },
-    UploadedFileFactoryInterface::class => function (ContainerInterface $container) {
+    UploadedFileFactoryInterface::class => function (ContainerInterface $container): UploadedFileFactoryInterface {
         return $container->get(Psr17Factory::class);
     },
-    UriFactoryInterface::class => function (ContainerInterface $container) {
+    UriFactoryInterface::class => function (ContainerInterface $container): UriFactoryInterface {
         return $container->get(Psr17Factory::class);
     },
-    RouteParserInterface::class => function (ContainerInterface $container) {
+    RouteParserInterface::class => function (ContainerInterface $container): RouteParserInterface {
         return $container->get(App::class)->getRouteCollector()->getRouteParser();
     },
-    BasePathMiddleware::class => function (ContainerInterface $container) {
+    BasePathMiddleware::class => function (ContainerInterface $container): BasePathMiddleware {
         return new BasePathMiddleware($container->get(App::class));
     },
-    PHPMailer::class => function (ContainerInterface $container) {
+    PHPMailer::class => function (ContainerInterface $container): PHPMailer {
         $settings = $container->get('settings')['mail'];
         $mail = new PHPMailer(true);
         $mail->SMTPDebug = 0;
@@ -115,7 +115,7 @@ $definitions = [
             'password' => $settings['db']["DB_PASSWORD"]
         ]);
     },
-    WhoopsMiddleware::class => function (ContainerInterface $container) {
+    WhoopsMiddleware::class => function (ContainerInterface $container): WhoopsMiddleware {
         $env = $container->get('settings')['environment'];
 
         return new WhoopsMiddleware([

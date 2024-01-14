@@ -25,7 +25,7 @@ class UserRepository
     /**
      * @throws Exception
      */
-    public function createUser(array $body): array
+    public function createUser(array $body): ?array
     {
         $uuid = Uuid::uuid4()->toString();
 
@@ -47,7 +47,7 @@ class UserRepository
         return $inserted;
     }
 
-    public function updateUserPasswordToken($email, $token): array
+    public function updateUserPasswordToken($email, $token): ?array
     {
         $this->db->update("user", [
             "passwordResetToken" => $token,
@@ -60,7 +60,7 @@ class UserRepository
         return $updated;
     }
 
-    public function updateUserPassword($email, $password): array
+    public function updateUserPassword($email, $password): ?array
     {
         $this->db->update("user", [
             "password" => password_hash($password, PASSWORD_BCRYPT),

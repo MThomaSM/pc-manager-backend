@@ -14,7 +14,7 @@ class ConnectionRepository
     {
     }
 
-    public function getConnections(string $userId, string $computerId)
+    public function getConnections(string $userId, string $computerId): array
     {
         return $this->db->select("connection", [
             "[>]computer" => ["computerId" => "id"],
@@ -41,7 +41,7 @@ class ConnectionRepository
         ]);
     }
 
-    public function getConnectionsByServer(string $userId, string $computerId, string $serverId)
+    public function getConnectionsByServer(string $userId, string $computerId, string $serverId): array
     {
         return $this->db->select("connection", [
             "[>]computer" => ["computerId" => "id"],
@@ -69,7 +69,7 @@ class ConnectionRepository
             ]);
     }
 
-    public function getConnectionByComputerAndType(string $userId, string $computerId, string $type = "vnc")
+    public function getConnectionByComputerAndType(string $userId, string $computerId, string $type = "vnc"): ?array
     {
         return $this->db->get("connection", [
                 "[>]computer" => ["computerId" => "id"],
@@ -98,7 +98,7 @@ class ConnectionRepository
         );
     }
 
-    public function getConnection(string $userId, string $id)
+    public function getConnection(string $userId, string $id): ?array
     {
         return $this->db->get("connection", [
             "[>]computer" => ["computerId" => "id"],
@@ -126,7 +126,7 @@ class ConnectionRepository
         );
     }
 
-    public function createConnection(array $user, string $computerId, array $body)
+    public function createConnection(array $user, string $computerId, array $body): ?array
     {
         $inserted = $this->db->insert("connection", [
             "id" => Uuid::uuid4()->toString(),
@@ -144,7 +144,7 @@ class ConnectionRepository
         return $this->getConnectionByComputerAndType($user["id"], $computerId, $body["type"]);
     }
 
-    public function updateConnection(array $user, string $id, string $computerId, array $body)
+    public function updateConnection(array $user, string $id, string $computerId, array $body): ?array
     {
         $updated = $this->db->update("connection", [
             "remotePort" => $body["remotePort"],
@@ -162,7 +162,7 @@ class ConnectionRepository
         return $this->getConnection($user["id"], $id);
     }
 
-    public function deleteConnection(array $user, string $id, string $computerId)
+    public function deleteConnection(array $user, string $id, string $computerId): void
     {
         $this->db->delete("connection", [
             "id" => $id,

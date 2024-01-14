@@ -119,7 +119,7 @@ class StartlistRepository
         }
     }
 
-    public function createStartlist(string $deviceId, string $computerId, array $user, $startAt = null): array
+    public function createStartlist(string $deviceId, string $computerId, array $user, $startAt = null): ?array
     {
         $uuid = Uuid::uuid4()->toString();
         $this->db->insert("startlist", [

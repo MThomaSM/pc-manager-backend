@@ -18,7 +18,7 @@ class Util
         return $flattenedErrors;
     }
 
-    public static function replaceValueInArrayRecursively(array $array, $find, $replacement): array
+    public static function replaceValueInArrayRecursively(array $array, string $find, string $replacement): array
     {
         foreach ($array as $key => $value) {
             if (is_array($value)) {
