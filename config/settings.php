@@ -61,6 +61,9 @@ return [
         "algorithm" => "HS512",
         "expiration" => $_ENV["JWT_EXPIRATION"]
     ],
+    "recaptcha" => [
+        "secret" => $_ENV["RECAPTCHA_SECRET_KEY"]
+    ],
     'commands' => [
         ExampleCommand::class,
     ]

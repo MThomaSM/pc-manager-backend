@@ -13,6 +13,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Ramsey\Uuid\Uuid;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Valitron\Validator;
 use function DI\string;
 
@@ -165,6 +166,7 @@ class UserController extends AbstractController
 
     /**
      * @throws \PHPMailer\PHPMailer\Exception
+     * @throws TransportExceptionInterface
      */
     public function sendResetPasswordEmail(Request $request, Response $response, UserRepository $userRepository, PHPMailer $mailer): Response
     {
@@ -173,7 +175,7 @@ class UserController extends AbstractController
         $v = new Validator($body);
         $v->rules([
             "required" => [
-                ["email"], ["feUrl"]
+                ["email"], ["feUrl"], ["recaptchaToken"]
             ],
             "email" => [
                 ["email"]
@@ -187,6 +189,10 @@ class UserController extends AbstractController
 
         if (!$v->validate()) {
             return $this->error($response, Util::flattenValidationErrors($v->errors()));
+        }
+
+        if(!Util::verifyRecaptcha($this->settings["recaptcha"]["secret"], $body["recaptchaToken"])){
+            return $this->error($response, "Invalid recaptcha");
         }
 
         $user = $userRepository->getUserByEmail($body["email"]);

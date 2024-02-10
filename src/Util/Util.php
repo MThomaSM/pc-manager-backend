@@ -4,6 +4,8 @@ namespace App\Util;
 
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
+use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class Util
 {
@@ -45,5 +47,22 @@ class Util
         } catch (Exception $e) {
             return false;
         }
+    }
+
+    /**
+     * @throws TransportExceptionInterface
+     */
+    public static function verifyRecaptcha(string $recaptchaSecret, string $recaptchaResponse): bool
+    {
+        $httpClient = HttpClient::create();
+        $response = $httpClient->request('POST', 'https://www.google.com/recaptcha/api/siteverify', [ //v3
+            'body' => [
+                'secret' => $recaptchaSecret,
+                'response' => $recaptchaResponse
+            ],
+            "verify_peer" => __DIR__."/data/cacert.pem",
+        ]);
+        $body = $response->toArray();
+        return $body['success'];
     }
 }
