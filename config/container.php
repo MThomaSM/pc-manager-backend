@@ -119,7 +119,7 @@ $definitions = [
         $env = $container->get('settings')['environment'];
 
         return new WhoopsMiddleware([
-            'enable' => true,
+            'enable' => $env === 'DEVELOPMENT',
             'editor' => 'phpstorm',
             'title'  => 'whoops',
         ]);

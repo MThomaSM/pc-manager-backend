@@ -20,8 +20,9 @@ class StartlistController extends AbstractController
         return $this->data($response, $data["data"], StatusCodeInterface::STATUS_OK, $data["meta"]);
     }
 
-    public function maclist(Request $request, Response $response, StartlistRepository $startlistRepository, array $user = [], string $deviceId = null, string $computerId = null): Response
+    public function maclist(Request $request, Response $response, StartlistRepository $startlistRepository, DeviceRepository $deviceRepository, array $user = [], string $deviceId = null, string $computerId = null): Response
     {
+        $deviceRepository->updateLastActiveAt($deviceId);
         return $this->json($response, $startlistRepository->getMaclist($deviceId));
     }
 
@@ -74,8 +75,8 @@ class StartlistController extends AbstractController
                 ["macAddress"], ["deviceId"]
             ],
             "entityExist" => [
-                ["macAddress", "startlist", ["computer.macAddress" => "#VALUE#", "startlist.userId" => $user["id"]], ["[>]computer" => ["computerId" => "id"]]], // making sure device with that exist, #VALUE# will be replaced with validator value
-                ["deviceId", "startlist", ["deviceId" => "#VALUE#", "userId" => $user["id"]]], // making sure device with that exist, #VALUE# will be replaced with validator value
+                ["macAddress", "startlist", ["computer.macAddress" => "#VALUE#"], ["[>]computer" => ["computerId" => "id"]]], // making sure device with that exist, #VALUE# will be replaced with validator value
+                ["deviceId", "startlist", ["deviceId" => "#VALUE#"]], // making sure device with that exist, #VALUE# will be replaced with validator value
             ],
         ]);
 

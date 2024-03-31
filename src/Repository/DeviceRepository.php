@@ -19,7 +19,6 @@ class DeviceRepository
     {
         return $this->db->select("device", "*", ["userId" => $user["id"]]);
     }
-
     public function createDevice(array $body, array $user): array
     {
         $this->db->insert("device", [
@@ -38,6 +37,11 @@ class DeviceRepository
         ], ["id" => $id, "userId" => $user["id"]]);
 
         return $this->getDevice($id, $user);
+    }
+
+    public function updateLastActiveAt(string $id): void
+    {
+        $this->db->update("device", ["lastActiveAt" => date("Y-m-d H:i:s")], ["id" => $id]);
     }
 
     public function deleteDevice(string $id, array $user): void
